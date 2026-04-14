@@ -1,0 +1,37 @@
+{
+  "contextProviders": [
+    {
+      "name": "sql-server",
+      "command": "node ./infra/ai/mcp/sql-server/sql-server.js"
+    },
+    {
+      "name": "swagger",
+      "command": "node ./infra/ai/mcp/swagger/swagger.js"
+    },
+    {
+      "name": "prisma",
+      "command": "node ./infra/ai/mcp/prisma/prisma.js"
+    },
+    {
+      "name": "laravel",
+      "command": "node ./infra/ai/mcp/laravel/laravel.js"
+    },
+    {
+      "name": "flutter",
+      "command": "node ./infra/ai/mcp/flutter/flutter.js"
+    },
+    {
+      "name": "nextjs",
+      "command": "node ./infra/ai/mcp/nextjs/nextjs.js"
+    },
+    {
+      "name": "nestjs",
+      "command": "node ./infra/ai/mcp/nestjs/nestjs.js"
+    },
+    {
+      "name": "terminal",
+      "command": "node ./infra/ai/mcp/terminal/terminal.js"
+    }
+  ]
+}
+
