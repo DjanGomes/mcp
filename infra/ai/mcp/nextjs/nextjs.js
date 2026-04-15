@@ -118,8 +118,9 @@ function getNextjsStructure(projectPath = process.cwd()) {
 if (require.main === module) {
   (async () => {
     try {
-      const { projectPath } = await readJsonInput();
-      const result = getNextjsStructure(projectPath);
+      const input = await readJsonInput();
+      const root = input.root || input.projectPath;
+      const result = getNextjsStructure(root);
       writeJsonOutput({ provider: "nextjs", result });
     } catch (err) {
       writeJsonOutput({ error: err.message });

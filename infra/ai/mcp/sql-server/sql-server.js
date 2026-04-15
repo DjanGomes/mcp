@@ -1,21 +1,35 @@
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../../../..", ".env") });
 const sql = require("mssql");
-const { readJsonInput, writeJsonOutput } = require("../utils");
+const { loadRootEnv, readJsonInput, writeJsonOutput } = require("../utils");
 
-const config = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-  },
-};
+function buildSqlConfig() {
+  return {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    database: process.env.DB_NAME,
+    options: {
+      encrypt: false,
+      trustServerCertificate: true,
+    },
+  };
+}
 
-async function queryDatabase(query) {
+async function queryDatabase(queryOrOptions = {}) {
+  let query = "";
+  let root;
+
+  if (typeof queryOrOptions === "string") {
+    query = queryOrOptions;
+  } else if (queryOrOptions && typeof queryOrOptions === "object") {
+    query = queryOrOptions.query || "";
+    root = queryOrOptions.root;
+    console.log("🔥 SQL Server Query:", query, "root:", root);
+  }
+
+  loadRootEnv(root);
+  const config = buildSqlConfig();
+
   try {
     await sql.connect(config);
     const result = await sql.query(query);
@@ -26,10 +40,13 @@ async function queryDatabase(query) {
 }
 
 if (require.main === module) {
+  console.log("🔥 SQL Server MCP Provider HIT");
   (async () => {
     try {
-      const { options = {} } = await readJsonInput();
-      const result = await queryDatabase(options.query || "");
+      const input = await readJsonInput();
+      const root = input.root || input.projectPath;
+      const options = input.options || {};
+      const result = await queryDatabase({ query: options.query || input.query || "", root });
       writeJsonOutput({ provider: "sql-server", result });
     } catch (err) {
       writeJsonOutput({ error: err.message });

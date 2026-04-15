@@ -13,8 +13,10 @@ function runCommand(command, projectPath = process.cwd()) {
 if (require.main === module) {
   (async () => {
     try {
-      const { projectPath, options = {} } = await readJsonInput();
-      const result = await runCommand(options.command || "", projectPath);
+      const input = await readJsonInput();
+      const root = input.root || input.projectPath;
+      const options = input.options || {};
+      const result = await runCommand(options.command || "", root);
       writeJsonOutput({ provider: "terminal", result });
     } catch (err) {
       writeJsonOutput({ error: err.message });

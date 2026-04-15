@@ -1,7 +1,20 @@
+const fs = require("fs");
 const path = require("path");
+const dotenv = require("dotenv");
 
-function resolveRoot(projectPath) {
-  return projectPath ? path.resolve(projectPath) : process.cwd();
+function resolveRoot(root) {
+  return root ? path.resolve(root) : process.cwd();
+}
+
+function loadRootEnv(root) {
+  const resolvedRoot = resolveRoot(root);
+  const envPath = path.join(resolvedRoot, ".env");
+
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath, override: true });
+  }
+
+  return resolvedRoot;
 }
 
 async function readJsonInput() {
@@ -36,6 +49,7 @@ function writeJsonOutput(payload) {
 
 module.exports = {
   resolveRoot,
+  loadRootEnv,
   readJsonInput,
   writeJsonOutput,
 };

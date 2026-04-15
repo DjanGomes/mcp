@@ -5,6 +5,10 @@
       "command": "node ./infra/ai/mcp/sql-server/sql-server.js"
     },
     {
+      "name": "sql",
+      "command": "node ./infra/ai/mcp/sql-server/sql-server.js"
+    },
+    {
       "name": "swagger",
       "command": "node ./infra/ai/mcp/swagger/swagger.js"
     },

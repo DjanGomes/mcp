@@ -15,8 +15,9 @@ function getPrismaSchema(projectPath = process.cwd()) {
 if (require.main === module) {
   (async () => {
     try {
-      const { projectPath } = await readJsonInput();
-      const result = getPrismaSchema(projectPath);
+      const input = await readJsonInput();
+      const root = input.root || input.projectPath;
+      const result = getPrismaSchema(root);
       writeJsonOutput({ provider: "prisma", result });
     } catch (err) {
       writeJsonOutput({ error: err.message });

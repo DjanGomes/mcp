@@ -2,10 +2,16 @@ const fs = require("fs");
 const path = require("path");
 const { resolveRoot, readJsonInput, writeJsonOutput } = require("../utils");
 
-function getFlutterStructure(projectPath = process.cwd()) {
+function getFlutterStructure(root) {
   try {
-    const root = resolveRoot(projectPath);
-    const files = fs.readdirSync(path.join(root, "lib"));
+    const resolvedRoot = resolveRoot(root);
+    const libPath = path.join(resolvedRoot, "lib");
+
+    if (!fs.existsSync(libPath)) {
+      return { error: "Diretório 'lib' não encontrado" };
+    }
+
+    const files = fs.readdirSync(libPath);
     return files;
   } catch (err) {
     return { error: err.message };
@@ -15,9 +21,15 @@ function getFlutterStructure(projectPath = process.cwd()) {
 if (require.main === module) {
   (async () => {
     try {
-      const { projectPath } = await readJsonInput();
-      const result = getFlutterStructure(projectPath);
-      writeJsonOutput({ provider: "flutter", result });
+      const { root } = await readJsonInput();
+
+      const result = getFlutterStructure(root);
+
+      writeJsonOutput({
+        provider: "flutter",
+        root: resolveRoot(root),
+        result
+      });
     } catch (err) {
       writeJsonOutput({ error: err.message });
       process.exit(1);
